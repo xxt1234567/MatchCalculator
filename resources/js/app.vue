@@ -181,17 +181,7 @@
                             inputType: "number",
                             value: this.wscore,
                             width: 180,
-                            disabled: true
-                        },
-                        {
-                            type: "input",
-                            label: "战败积分",
-                            labelPosition: "left",
-                            name: "lscore",
-                            inputType: "number",
-                            value: this.lscore,
-                            width: 180,
-                            disabled: true
+                            disabled: this.bo != -1
                         },
                         {
                             type: "input",
@@ -201,7 +191,17 @@
                             inputType: "number",
                             value: this.dscore,
                             width: 180,
-                            disabled: true
+                            disabled: this.bo != -1
+                        },
+                        {
+                            type: "input",
+                            label: "战败积分",
+                            labelPosition: "left",
+                            name: "lscore",
+                            inputType: "number",
+                            value: this.lscore,
+                            width: 180,
+                            disabled: this.bo != -1
                         },
                         {
                             cols: [
@@ -218,6 +218,15 @@
                                     type: "button",
                                     value: "重置",
                                     name: "reset",
+                                },
+                                {
+                                    type: "spacer",
+                                    width: 50
+                                },
+                                {
+                                    type: "button",
+                                    value: "载入数据",
+                                    name: "load",
                                 }
                             ]
                         },
@@ -230,19 +239,19 @@
                 this.maintabbar.getCell("tab1").attach(this.form1);
                 function getmostml(x) {
                     if (x == 1) {
-                        return 18;
+                        return 16;
                     }
                     else if (x == 3) {
-                        return 10;
-                    }
-                    else if (x == 5) {
                         return 8;
                     }
-                    else if (x == 7) {
+                    else if (x == 5) {
                         return 6;
                     }
+                    else if (x == 7) {
+                        return 5;
+                    }
                     else {
-                        return 12;
+                        return 10;
                     }
                 }
                 this.form1.getItem("bo").events.on("change", function (events) {
@@ -261,6 +270,75 @@
                         that.form1.getItem("dscore").disable();
                     }
                 });
+
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = ".json";
+                fileInput.style.display = "none";
+                document.body.appendChild(fileInput);
+
+                function filecheck(data) {
+                    if (!("teamcnt" in data) || !("double" in data) || !("bo" in data) || !("wscore" in data) || !("lscore" in data) || !("dscore" in data)) {
+                        return false
+                    }
+                    if (!("teamnames" in data) || !("scoreboard" in data) || !("matchleftcnt" in data) || !("matchleft" in data) || !("showtop" in data) || !("showbot" in data)) {
+                        return false
+                    }
+                    if (!("toprank" in data) || !("botrank" in data) || !("sadd" in data) || !("srank" in data) || !("snext" in data) || !("steam" in data)) {
+                        return false
+                    }
+                    if (!("steamr1" in data) || !("steamr2" in data) || !("nteam1" in data) || !("nteam2" in data) || !("mostml" in data)) {
+                        return false
+                    }
+                    return true
+                }
+
+                this.form1.getItem("load").events.on("click", () => {
+                    fileInput.value = "";
+                    fileInput.click();
+                });
+                fileInput.addEventListener("change", async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    try {
+                        const data = JSON.parse(await file.text());
+                        if (!filecheck(data)) {
+                            throw new Error("文件格式错误");
+                        }
+                        that.teamcnt = data.teamcnt;
+                        that.double = data.double;
+                        that.bo = data.bo;
+                        that.wscore = data.wscore;
+                        that.lscore = data.lscore;
+                        that.dscore = data.dscore;
+                        that.teamnames = data.teamnames;
+                        that.scoreboard = data.scoreboard;
+                        that.matchleftcnt = data.matchleftcnt;
+                        that.matchleft = data.matchleft;
+                        that.showtop = data.showtop;
+                        that.showbot = data.showbot;
+                        that.toprank = data.toprank;
+                        that.botrank = data.botrank;
+                        that.sadd = data.sadd;
+                        that.srank = data.srank;
+                        that.snext = data.snext;
+                        that.steam = data.steam;
+                        that.steamr1 = data.steamr1;
+                        that.steamr2 = data.steamr2;
+                        that.nteam1 = data.nteam1;
+                        that.nteam2 = data.nteam2;
+                        that.mostml = data.mostml;
+
+                        that.maintabbar.enableTab("tab4");
+                        that.maintabbar.setActive("tab4");
+                        that.maintabbar.disableTab("tab1");
+                        that.init4();
+                    } catch (error) {
+                        alert("文件读取失败：" + error.message);
+                    }
+                });
+
                 this.form1.getItem("next").events.on("click", function (events) {
                     that.teamcnt = that.form1.getItem("teamcnt").getValue();
                     that.bo = that.form1.getItem("bo").getValue();
@@ -274,6 +352,7 @@
                         that.form1.getItem("teamcnt").setProperties({
                             helpMessage: "请输入2-10之间的整数",
                         });
+                        alert("请输入2-10之间的整数");
                         flag = false;
                     }
                     else {
@@ -288,6 +367,7 @@
                         that.form1.getItem("wscore").setProperties({
                             helpMessage: "请输入整数",
                         });
+                        alert("请输入整数");
                         flag = false;
                     }
                     else {
@@ -299,6 +379,7 @@
                         that.form1.getItem("lscore").setProperties({
                             helpMessage: "请输入整数",
                         });
+                        alert("请输入整数");
                         flag = false;
                     }
                     else {
@@ -310,6 +391,7 @@
                         that.form1.getItem("dscore").setProperties({
                             helpMessage: "请输入整数",
                         });
+                        alert("请输入整数");
                         flag = false;
                     }
                     else {
@@ -332,6 +414,8 @@
             init2() {
                 const that = this;
                 this.scoreboard = [];
+                this.matchleftcnt = 0;
+                this.matchleft = [];
                 for (let i = 0; i < this.teamcnt; i++) {
                     this.scoreboard.push([]);
                     for (let j = 0; j < this.teamcnt; j++) {
@@ -420,8 +504,6 @@
             },
             init3() {
                 const that = this;
-                this.matchleftcnt = 0;
-                this.matchleft = [];
                 this.showtop = 0;
                 this.showbot = 0;
                 this.toprank = 1;
@@ -477,7 +559,8 @@
                                 {
                                     type: "checkbox",
                                     name: `m${match}r1`,
-                                    text: "该场比赛未进行"
+                                    text: "该场比赛未进行",
+                                    checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 0)
                                 }
                             ]
                             if (this.double == 2) {
@@ -512,7 +595,8 @@
                                     {
                                         type: "checkbox",
                                         name: `m${match}r2`,
-                                        text: "该场比赛未进行"
+                                        text: "该场比赛未进行",
+                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 1)
                                     }
                                 )
                             }
@@ -564,7 +648,8 @@
                                 {
                                     type: "checkbox",
                                     name: `m${match}r1`,
-                                    text: "该场比赛未进行"
+                                    text: "该场比赛未进行",
+                                    checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 0)
                                 }
                             ]
                             if (this.double == 2) {
@@ -599,7 +684,8 @@
                                     {
                                         type: "checkbox",
                                         name: `m${match}r2`,
-                                        text: "该场比赛未进行"
+                                        text: "该场比赛未进行",
+                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 1)
                                     }
                                 )
                             }
@@ -667,6 +753,8 @@
                 });
                 this.maintabbar.getCell("tab3").attach(this.form3);
 
+                this.matchleftcnt = 0;
+                this.matchleft = [];
                 this.form3.getItem("next").events.on("click", function (events) {
                     function isvalid(f, t1, t2, bo) {
                         if (f) {
@@ -691,6 +779,8 @@
                                     that.scoreboard[j][i][k - 1] = t2;
                                 }
                                 else {
+                                    that.scoreboard[i][j][k - 1] = 0;
+                                    that.scoreboard[j][i][k - 1] = 0;
                                     that.matchleftcnt++;
                                     that.matchleft.push([i, j, k - 1]);
                                 }
@@ -698,9 +788,6 @@
                             match++;
                         }
                     }
-                    //console.log(that.scoreboard)
-                    //console.log(that.matchleftcnt)
-                    //console.log(that.matchleft)
                     that.maintabbar.enableTab("tab4");
                     that.maintabbar.setActive("tab4");
                     that.maintabbar.disableTab("tab3");
@@ -768,7 +855,8 @@
                                     type: "checkbox",
                                     name: "showtop",
                                     text: "显示排名前列的概率",
-                                    width: 200
+                                    width: 200,
+                                    checked: this.showtop == 1
                                 },
                                 {
                                     type: "spacer",
@@ -782,7 +870,7 @@
                                     width: 150,
                                     options: optionsrank,
                                     value: this.toprank,
-                                    disabled: true
+                                    disabled: this.showtop == 0
                                 },
                                 {
                                     type: "spacer",
@@ -801,7 +889,8 @@
                                     type: "checkbox",
                                     name: "showbot",
                                     text: "显示排名末尾的概率",
-                                    width: 200
+                                    width: 200,
+                                    checked: this.showbot == 1
                                 },
                                 {
                                     type: "spacer",
@@ -815,7 +904,7 @@
                                     width: 100,
                                     options: optionsrank,
                                     value: this.botrank,
-                                    disabled: true
+                                    disabled: this.showbot == 0
                                 },
                                 {
                                     type: "spacer",
@@ -830,12 +919,14 @@
                         {
                             type: "checkbox",
                             name: "sadd",
-                            text: "显示加赛筛选"
+                            text: this.bo == -1 ? "显示同分筛选" : "显示加赛筛选",
+                            checked: this.sadd == 1
                         },
                         {
                             type: "checkbox",
                             name: "srank",
-                            text: "显示排名筛选"
+                            text: "显示排名筛选",
+                            checked: this.srank == 1
                         },
                         {
                             cols: [
@@ -846,7 +937,7 @@
                                     width: 100,
                                     options: optionsteam,
                                     value: this.steam,
-                                    disabled: true
+                                    disabled: this.srank == 0
                                 },
                                 {
                                     type: "spacer",
@@ -859,7 +950,7 @@
                                     width: 100,
                                     options: optionsrank,
                                     value: this.steamr1,
-                                    disabled: true
+                                    disabled: this.srank == 0
                                 },
                                 {
                                     type: "spacer",
@@ -872,25 +963,17 @@
                                     width: 100,
                                     options: optionsrank,
                                     value: this.steamr2,
-                                    disabled: true
+                                    disabled: this.srank == 0
                                 },
                             ]
                         },
                         {
-                            cols: [
-                                {
-                                    type: "checkbox",
-                                    name: "snext",
-                                    text: "显示下场分类概率",
-                                    width: 200,
-                                },
-                                /*{
-                                    type: "text",
-                                    name: "errm1",
-                                }*/
-                            ]
+                            type: "checkbox",
+                            name: "snext",
+                            text: "显示下场分类概率",
+                            width: 200,
+                            checked: this.snext == 1
                         },
-                        
                         {
                             type: "select",
                             name: "nteam",
@@ -899,7 +982,7 @@
                             width: 280,
                             options: optionstleft,
                             value: 0,
-                            disabled: true
+                            disabled: this.snext == 0
                         },
                         {
                             type: "text",
@@ -943,6 +1026,7 @@
                                     type: "button",
                                     value: "下一步",
                                     name: "next",
+                                    loading: false
                                 },
                                 {
                                     type: "spacer",
@@ -976,13 +1060,11 @@
                 this.form4.getItem("pre").enable();
                 this.form4.getItem("reset").enable();
                 if (this.matchleftcnt > this.mostml) {
-                    this.form4.getItem("showtop").disable();
-                    this.form4.getItem("showbot").disable();
                     this.form4.getItem("sadd").disable();
                     this.form4.getItem("srank").disable();
                     this.form4.getItem("snext").disable();
                     this.form4.getItem("errm3").setProperties({
-                        label: "*剩余比赛过多，无法计算概率，请直接点击提交。",
+                        label: "*剩余比赛过多，排名概率将采用蒙特卡洛模拟计算，其他输出筛选将禁用。",
                     });
                 }
                 else if (this.matchleftcnt > 3) {
@@ -1000,12 +1082,6 @@
                         label: "*所有比赛已结束，无需计算概率，请直接点击提交。",
                     });
                 }
-                /*else if (this.bo == -1) {
-                    this.form4.getItem("snext").disable();
-                    this.form4.getItem("errm1").setProperties({
-                        label: "*自由得分赛制下，此项无效",
-                    });
-                }*/
                 if (this.matchleftcnt == 3) {
                     this.form4.getItem("mlseq3").enable();
                 }
@@ -1078,10 +1154,11 @@
                         that.steamr1 = that.form4.getItem("steamr1").getValue();
                         that.steamr2 = that.form4.getItem("steamr2").getValue();
                         if (that.steamr1 > that.steamr2) {
-                            submitflag = false;
                             that.form4.getItem("steam").setProperties({
-                                helpMessage: "输入有误，起始排名不应该超过终止排名。",
+                                helpMessage: "输入有误，起始排名不应该超过终止排名",
                             });
+                            alert("输入有误，起始排名不应该超过终止排名");
+                            submitflag = false;
                         }
                     }
                     if (that.snext) {
@@ -1105,6 +1182,7 @@
                                 that.form4.getItem("mlseq2").setProperties({
                                     helpMessage: "输入有误，场次重复",
                                 });
+                                alert("输入有误，场次重复");
                                 submitflag = false;
                             }
                             else {
@@ -1122,6 +1200,7 @@
                                 that.form4.getItem("mlseq3").setProperties({
                                     helpMessage: "输入有误，场次重复",
                                 });
+                                alert("输入有误，场次重复");
                                 submitflag = false;
                             }
                             else {
@@ -1138,15 +1217,17 @@
 
                     if (submitflag) {
                         const data = {
-                            scoreboard: that.scoreboard,
-                            matchleft: that.matchleft,
-                            matchleftcnt: that.matchleftcnt,
+                            warning: "请勿随意修改文件内容，否则读取文件后可能导致系统出错",
                             teamcnt: that.teamcnt,
-                            bo: that.bo,
                             double: that.double,
+                            bo: that.bo,
                             wscore: that.wscore,
                             lscore: that.lscore,
                             dscore: that.dscore,
+                            teamnames: that.teamnames,
+                            scoreboard: that.scoreboard,
+                            matchleftcnt: that.matchleftcnt,
+                            matchleft: that.matchleft,
                             showtop: that.showtop,
                             showbot: that.showbot,
                             toprank: that.toprank,
@@ -1159,8 +1240,11 @@
                             steamr2: that.steamr2,
                             nteam1: that.nteam1,
                             nteam2: that.nteam2,
-                            mostml: that.mostml,
+                            mostml: that.mostml
                         }
+                        that.form4.getItem("next").setProperties({
+                            loading: true
+                        });
                         that.form4.getItem("next").disable();
                         that.form4.getItem("pre").disable();
                         that.form4.getItem("reset").disable();
@@ -1172,19 +1256,38 @@
                             type: 'POST',
                             data: data,
                             success: function (response) {
-                                const lines = response.res.split(/\r?\n/).filter(line => line.trim() !== '');
-                                const arrays = lines.map(line => JSON.parse(line));
-                                console.log(arrays);
-                                that.maintabbar.enableTab("tab5");
-                                that.maintabbar.setActive("tab5");
-                                that.maintabbar.disableTab("tab4");
-                                that.init5(arrays);
+                                if (response.status === 'error') {
+                                    alert("计算错误: " + response.message);
+                                    that.form4.getItem("next").enable();
+                                    that.form4.getItem("pre").enable();
+                                    that.form4.getItem("reset").enable();
+                                    that.form4.getItem("next").setProperties({
+                                        loading: false
+                                    });
+                                }
+                                else {
+                                    const lines = response.res.split(/\r?\n/).filter(line => line.trim() !== '');
+                                    const arrays = lines.map(line => JSON.parse(line));
+                                    //console.log(arrays);
+                                    that.maintabbar.enableTab("tab5");
+                                    that.maintabbar.setActive("tab5");
+                                    that.maintabbar.disableTab("tab4");
+                                    that.init5(arrays, data);
+                                }
                             },
-                            error: function () {
-                                alert("抱歉，计算超时，请减少未进行比赛场次或队伍数量以简化计算！")
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                if (jqXHR.status == 500) {
+                                    alert("抱歉，计算超时，请减少未进行比赛场次或队伍数量以简化计算！")
+                                }
+                                else {
+                                    alert("服务器异常，请尝试刷新页面或重启系统！")
+                                }
                                 that.form4.getItem("next").enable();
                                 that.form4.getItem("pre").enable();
                                 that.form4.getItem("reset").enable();
+                                that.form4.getItem("next").setProperties({
+                                    loading: false
+                                });
                             }
                         });
                     }
@@ -1201,7 +1304,7 @@
                     that.init();
                 });
             },
-            init5(arrays) {
+            init5(arrays, data) {
                 const that = this;
                 const addstr = this.bo == -1 ? "同分" : "加赛";
                 var columns;
@@ -1251,6 +1354,15 @@
                             width: 50
                         },
                         {
+                            type: "button",
+                            value: "保存数据",
+                            name: "save"
+                        },
+                        {
+                            type: "spacer",
+                            width: 50
+                        },
+                        {
                             type: "text",
                             name: "bo0text",
                         }
@@ -1275,11 +1387,16 @@
                             { tab: "最终排名概率", id: "pos" }
                         )
                     }
+                    else {
+                        views.push(
+                            { tab: "最终排名概率(蒙特卡洛模拟)", id: "pos" }
+                        )
+                    }
                     if (this.matchleftcnt <= 3) {
                         views.push(
-                            { tab: "可能的排名情况（详细版）", id: "rank" },
-                            { tab: "可能的排名情况（简化版）", id: "srank" },
-                            { tab: "可能的排名情况（可视化）", id: "vrank" }
+                            { tab: "可能的排名情况(详细版)", id: "rank" },
+                            { tab: "可能的排名情况(简化版)", id: "srank" },
+                            { tab: "可能的排名情况(可视化)", id: "vrank" }
                         )
                     }
                     if (this.sadd) {
@@ -1540,51 +1657,48 @@
                 }
                 this.infoform.getItem("info").setValue(curinfo);
                 if (this.matchleftcnt > 0) {
-                    if (this.matchleftcnt <= this.mostml) {
-                        console.log(111)
-                        this.vposlayout = new Layout(null, {
-                            cols: [
-                                {
-                                    id: "grid",
-                                    header: "表格形式",
-                                    resizable: true
-                                },
-                                {
-                                    id: "chart",
-                                    header: "可视化",
-                                    width: 500,
-                                },
-                            ],
-                        });
-                        columns = createcolumnsofpos();
-                        this.grid_pos = new Grid(null, {
-                            data: this.dgrid_pos,
-                            sortable: false,
-                            columns
-                        });
-                        for (let i = 0; i < this.teamcnt; i++) {
-                            const add = {
-                                team: this.teamnames[i],
-                                add: String(arrays[2][i][this.teamcnt]) + "%",
-                            }
-                            for (let j = 0; j < this.teamcnt; j++) {
-                                add[String(j + 1)] = String(arrays[2][i][j]) + "%";
-                            }
-                            if (this.showtop) {
-                                add["top"] = String(arrays[2][i][this.teamcnt + 1]) + "%";
-                                if (this.showbot) {
-                                    add["bot"] = String(arrays[2][i][this.teamcnt + 2]) + "%";
-                                }
-                            }
-                            else if (this.showbot) {
-                                add["bot"] = String(arrays[2][i][this.teamcnt + 1]) + "%";
-                            }
-                            this.dgrid_pos.add(add);
+                    this.vposlayout = new Layout(null, {
+                        cols: [
+                            {
+                                id: "grid",
+                                header: "表格形式",
+                                resizable: true
+                            },
+                            {
+                                id: "chart",
+                                header: "可视化",
+                                width: 500,
+                            },
+                        ],
+                    });
+                    columns = createcolumnsofpos();
+                    this.grid_pos = new Grid(null, {
+                        data: this.dgrid_pos,
+                        sortable: false,
+                        columns
+                    });
+                    for (let i = 0; i < this.teamcnt; i++) {
+                        const add = {
+                            team: this.teamnames[i],
+                            add: String(arrays[2][i][this.teamcnt]) + "%",
                         }
-                        this.restabbar.getCell("pos").attach(this.vposlayout);
-                        this.vposlayout.getCell("grid").attach(this.grid_pos);
-
+                        for (let j = 0; j < this.teamcnt; j++) {
+                            add[String(j + 1)] = String(arrays[2][i][j]) + "%";
+                        }
+                        if (this.showtop) {
+                            add["top"] = String(arrays[2][i][this.teamcnt + 1]) + "%";
+                            if (this.showbot) {
+                                add["bot"] = String(arrays[2][i][this.teamcnt + 2]) + "%";
+                            }
+                        }
+                        else if (this.showbot) {
+                            add["bot"] = String(arrays[2][i][this.teamcnt + 1]) + "%";
+                        }
+                        this.dgrid_pos.add(add);
                     }
+                    this.restabbar.getCell("pos").attach(this.vposlayout);
+                    this.vposlayout.getCell("grid").attach(this.grid_pos);
+                        
                     if (this.matchleftcnt <= 3) {
                         const allscores = getnextscores(arrays[3]);
                         columns = createcolumnsofrank(1)
@@ -1818,6 +1932,40 @@
                         }
                     }
                 });
+
+                this.resform.getItem("save").events.on("click", async function (events) {
+                    try {
+                        if ('showSaveFilePicker' in window) {
+                            const handle = await window.showSaveFilePicker({
+                                suggestedName: `calculation_${new Date().getTime()}.json`,
+                                types: [{
+                                    description: 'JSON Files',
+                                    accept: { 'application/json': ['.json'] }
+                                }]
+                            });
+
+                            const writable = await handle.createWritable();
+                            await writable.write(JSON.stringify(data));
+                            await writable.close();
+                        } else {
+                            const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+                            const url = URL.createObjectURL(blob);
+
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `calculation_${new Date().getTime()}.json`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            alert(`保存失败: ${err.message}`);
+                        }
+                    }
+                });
+
                 this.resform.getItem("pre").events.on("click", function (events) {
                     that.maintabbar.enableTab("tab4");
                     that.maintabbar.setActive("tab4");

@@ -2,6 +2,8 @@ import numpy as np
 import copy
 import sys
 import json
+import traceback
+import random
 
 def getmark(x, y):
     if(x == 0):
@@ -202,7 +204,7 @@ def indtrans(ind, cnt, bo_):
         i = i - 1
     return res
     
-def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, wscore, lscore, dscore, tags):
+def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, wscore, lscore, dscore, tags, mkflag):
     if (bo == -1):
         bo_ = 3
         possiblescore = [[1, 0], [0, 0], [0, 1]]
@@ -213,6 +215,7 @@ def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, 
             possiblescore[i] = [bo_win, i]
             possiblescore[bo - i] = [i, bo_win]
     maxind = bo_ ** matchleftcnt
+    mkmaxind = 60000 if mkflag else maxind
     possibleranks = []
     simplifiedranks = []
     selectaddmatchs = []
@@ -230,9 +233,13 @@ def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, 
     for i in range(teamcnt):
         teamindex.append(i)
     
-    for i in range(maxind):
+    for i in range(mkmaxind):
         possiblescoreboard = scoreboard
-        scoreind = indtrans(i, matchleftcnt, bo_)
+        if (mkflag):
+            x = random.randint(0, maxind)
+            scoreind = indtrans(x, matchleftcnt, bo_)
+        else:
+            scoreind = indtrans(i, matchleftcnt, bo_)
         resname = []
         for j in range(matchleftcnt):
             possiblescoreboard[matchleft[j][0]][matchleft[j][1]][matchleft[j][2]] = possiblescore[scoreind[j]][0]
@@ -349,9 +356,9 @@ def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, 
         if (matchleftcnt <= 3):
             simplifiedranks.append(simplifiedrank)
             
-    rankpossibilities = rankpossibilities / maxind
-    topposs = topposs / maxind
-    botposs = botposs / maxind
+    rankpossibilities = rankpossibilities / mkmaxind
+    topposs = topposs / mkmaxind
+    botposs = botposs / mkmaxind
     rankpossoutput = []
     for i in range(teamcnt):
         rankpossoutput.append([])
@@ -366,9 +373,9 @@ def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, 
             rankpossoutput[i].append(rankpossstr)
             
     if tags['possaftermatchtag']:
-        possaftermatch = possaftermatch / maxind * bo_
-        toppossaftermatch = toppossaftermatch / maxind * bo_
-        botpossaftermatch = botpossaftermatch / maxind * bo_
+        possaftermatch = possaftermatch / mkmaxind * bo_
+        toppossaftermatch = toppossaftermatch / mkmaxind * bo_
+        botpossaftermatch = botpossaftermatch / mkmaxind * bo_
         possaftermatchoutput = []
         for k in range(bo_):
             possaftermatchoutput.append([])
@@ -438,22 +445,21 @@ def main():
     mostml = int(sys.argv[22])
     if matchleft is None:
         matchleft = []
-    '''print(scoreboard)
-    print(matchleft)
-    print(matchleftcnt)
-    print(teamcnt)
-    print(bo)
-    print(double)
-    print(wscore)
-    print(lscore)
-    print(dscore)
-    print(tags)'''
     calccurrent(scoreboard, matchleft, matchleftcnt, teamcnt, bo_win, double, wscore, lscore, dscore)
-    if (matchleftcnt <= mostml and matchleftcnt > 0):
-        calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, wscore, lscore, dscore, tags)
+    if (matchleftcnt > 0):
+        calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, wscore, lscore, dscore, tags, matchleftcnt > mostml)
     else:
         for i in range(9 + bo):
             print([])
     
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        error_info = {
+            "status": "error",
+            "message": str(e),
+            "traceback": traceback.format_exc()
+        }
+        print(json.dumps(error_info))
+        sys.exit(1)

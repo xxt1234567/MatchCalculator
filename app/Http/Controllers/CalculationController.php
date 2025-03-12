@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-ini_set('max_execution_time', 300);
+
 class CalculationController extends Controller
 {
     public function calculate(Request $request)
@@ -35,7 +35,18 @@ class CalculationController extends Controller
         $jscoreboard = escapeshellarg(json_encode($scoreboard));
         $jmatchleft = escapeshellarg(json_encode($matchleft));
         
-        $output = shell_exec("python $pythonScriptPath $jscoreboard $jmatchleft $matchleftcnt $teamcnt $bo $double $wscore $lscore $dscore $showtop $showbot $toprank $botrank $sadd $srank $snext $steam $steamr1 $steamr2 $nteam1 $nteam2 $mostml");
-        return response()->json(['res' => $output]);
+        $output = shell_exec("python $pythonScriptPath $jscoreboard $jmatchleft $matchleftcnt $teamcnt $bo $double $wscore $lscore $dscore $showtop $showbot $toprank $botrank $sadd $srank $snext $steam $steamr1 $steamr2 $nteam1 $nteam2 $mostml 2>&1");
+        if (strpos($output, '"status": "error"') !== false) {
+            $errorData = json_decode($output, true);
+            return response()->json([
+                'status' => 'error',
+                'message' => $errorData['message'] ?? 'Python脚本执行错误'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'success',
+                'res' => $output
+            ]);
+        }
     }
 }
