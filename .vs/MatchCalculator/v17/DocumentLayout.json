@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\CalculationController.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app\\Http\\Controllers\\CalculationController.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\js\\app.vue||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:resources\\js\\app.vue||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\matchcalculator.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app\\Http\\Controllers\\matchcalculator.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\CalculationController.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app\\Http\\Controllers\\CalculationController.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\views\\welcome.blade.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:resources\\views\\welcome.blade.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\matchcalculator.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app\\Http\\Controllers\\matchcalculator.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,19 +22,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "welcome.blade.php",
-              "DocumentMoniker": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\views\\welcome.blade.php",
-              "RelativeDocumentMoniker": "resources\\views\\welcome.blade.php",
-              "ToolTip": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\views\\welcome.blade.php",
-              "RelativeToolTip": "resources\\views\\welcome.blade.php",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-09T16:34:37.018Z"
+              "DocumentIndex": 0,
+              "Title": "app.vue",
+              "DocumentMoniker": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\js\\app.vue",
+              "RelativeDocumentMoniker": "resources\\js\\app.vue",
+              "ToolTip": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\js\\app.vue",
+              "RelativeToolTip": "resources\\js\\app.vue",
+              "ViewState": "AgIAAFwFAAAAAAAAAAAAAHcFAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003491|",
+              "WhenOpened": "2025-03-02T17:48:29.783Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -48,35 +45,22 @@
               "RelativeDocumentMoniker": "app\\Http\\Controllers\\matchcalculator.py",
               "ToolTip": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\matchcalculator.py",
               "RelativeToolTip": "app\\Http\\Controllers\\matchcalculator.py",
-              "ViewState": "AgIAAEwBAAAAAAAAAAAAAPIAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAAMgAAAAAAAAAAAAAAB4AAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-03-03T20:58:18.917Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CalculationController.php",
               "DocumentMoniker": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\CalculationController.php",
               "RelativeDocumentMoniker": "app\\Http\\Controllers\\CalculationController.php",
               "ToolTip": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\app\\Http\\Controllers\\CalculationController.php",
               "RelativeToolTip": "app\\Http\\Controllers\\CalculationController.php",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBsAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAUAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-03-03T20:57:35.685Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "app.vue",
-              "DocumentMoniker": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\js\\app.vue",
-              "RelativeDocumentMoniker": "resources\\js\\app.vue",
-              "ToolTip": "C:\\Users\\x\u0027x\u0027t\\Desktop\\\u6D4B\u8BD5\\MatchCalculator\\resources\\js\\app.vue",
-              "RelativeToolTip": "resources\\js\\app.vue",
-              "ViewState": "AgIAALIEAAAAAAAAAAAAACoEAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003491|",
-              "WhenOpened": "2025-03-02T17:48:29.783Z",
               "EditorCaption": ""
             }
           ]

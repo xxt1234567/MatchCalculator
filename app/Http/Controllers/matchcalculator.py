@@ -215,7 +215,7 @@ def calcfinal(scoreboard, matchleft, matchleftcnt, teamcnt, bo, bo_win, double, 
             possiblescore[i] = [bo_win, i]
             possiblescore[bo - i] = [i, bo_win]
     maxind = bo_ ** matchleftcnt
-    mkmaxind = 60000 if mkflag else maxind
+    mkmaxind = 70000 if mkflag else maxind
     possibleranks = []
     simplifiedranks = []
     selectaddmatchs = []

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+ini_set('max_execution_time', 60);
 class CalculationController extends Controller
 {
     public function calculate(Request $request)

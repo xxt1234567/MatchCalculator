@@ -85,6 +85,7 @@
                 this.wscore = 0;
                 this.lscore = 0;
                 this.dscore = 0;
+
                 this.maintabbar = new Tabbar(this.$refs.myref, {
                     mode: "top",
                     css: "dhx_widget--bordered",
@@ -97,11 +98,11 @@
                     ],
                     disabled: ["tab2", "tab3", "tab4", "tab5"]
                 });
-                this.init1();
+                this.init1(false);
             },
-            init1() {
+            init1(pre) {
                 const that = this;
-                this.teamnames = [];
+                
                 this.form1 = new Form(null, {
                     css: "dhx_widget--bordered",
                     rows: [
@@ -233,9 +234,16 @@
                         {
                             type: "text",
                             value: "*系统完善中，可能暂时无法涵盖所有赛制，敬请谅解。"
+                        },
+                        {
+                            type: "text",
+                            name: "preinfo"
                         }
                     ]
                 });
+                if (pre) {
+                    this.form1.getItem("preinfo").setValue("*您已填写后续步骤的内容，修改赛制会导致这些内容失效");
+                }
                 this.maintabbar.getCell("tab1").attach(this.form1);
                 function getmostml(x) {
                     if (x == 1) {
@@ -340,35 +348,43 @@
                 });
 
                 this.form1.getItem("next").events.on("click", function (events) {
-                    that.teamcnt = that.form1.getItem("teamcnt").getValue();
-                    that.bo = that.form1.getItem("bo").getValue();
-                    that.double = that.form1.getItem("double").getValue();
+                    var submitflag = true;
+                    var preflag = false;
+                    if (that.teamcnt != that.form1.getItem("teamcnt").getValue()) {
+                        that.teamcnt = that.form1.getItem("teamcnt").getValue();
+                        preflag = true;
+                    }
+                    if (that.bo != that.form1.getItem("bo").getValue()) {
+                        that.bo = that.form1.getItem("bo").getValue();
+                        preflag = true;
+                    }
+                    if (that.double != that.form1.getItem("double").getValue()) {
+                        that.double = that.form1.getItem("double").getValue();
+                        preflag = true;
+                    }
                     that.wscore = that.form1.getItem("wscore").getValue();
                     that.lscore = that.form1.getItem("lscore").getValue();
                     that.dscore = that.form1.getItem("dscore").getValue();
                     that.mostml = getmostml(that.bo)
-                    var flag = true;
+                    
                     if (!(Number.isInteger(that.teamcnt) && that.teamcnt >= 2 && that.teamcnt <= 10)) {
                         that.form1.getItem("teamcnt").setProperties({
                             helpMessage: "请输入2-10之间的整数",
                         });
                         alert("请输入2-10之间的整数");
-                        flag = false;
+                        submitflag = false;
                     }
                     else {
                         that.form1.getItem("teamcnt").setProperties({
                             helpMessage: null,
                         });
-                        for (let i = 1; i <= that.teamcnt; i++) {
-                            that.teamnames.push(String.fromCharCode(64 + i));
-                        }
                     }
                     if (!Number.isInteger(that.wscore)) {
                         that.form1.getItem("wscore").setProperties({
                             helpMessage: "请输入整数",
                         });
                         alert("请输入整数");
-                        flag = false;
+                        submitflag = false;
                     }
                     else {
                         that.form1.getItem("wscore").setProperties({
@@ -380,7 +396,7 @@
                             helpMessage: "请输入整数",
                         });
                         alert("请输入整数");
-                        flag = false;
+                        submitflag = false;
                     }
                     else {
                         that.form1.getItem("lscore").setProperties({
@@ -392,14 +408,46 @@
                             helpMessage: "请输入整数",
                         });
                         alert("请输入整数");
-                        flag = false;
+                        submitflag = false;
                     }
                     else {
                         that.form1.getItem("dscore").setProperties({
                             helpMessage: null,
                         });
                     }
-                    if (flag) {
+                    if (submitflag) {
+                        if (pre == false || preflag) {
+                            that.teamnames = [];
+                            that.scoreboard = [];
+                            for (let i = 0; i < that.teamcnt; i++) {
+                                that.teamnames[i] = String.fromCharCode(65 + i);
+                            }
+                            for (let i = 0; i < that.teamcnt; i++) {
+                                that.scoreboard.push([]);
+                                for (let j = 0; j < that.teamcnt; j++) {
+                                    if (that.double == 1) {
+                                        that.scoreboard[i].push([0]);
+                                    }
+                                    else {
+                                        that.scoreboard[i].push([0, 0]);
+                                    }
+                                }
+                            }
+                            that.matchleftcnt = 0;
+                            that.matchleft = [];
+                            that.showtop = 0;
+                            that.showbot = 0;
+                            that.toprank = 1;
+                            that.botrank = 1;
+                            that.sadd = 0;
+                            that.srank = 0;
+                            that.snext = 0;
+                            that.steam = 0;
+                            that.steamr1 = 1;
+                            that.steamr2 = 1;
+                            that.nteam1 = 0;
+                            that.nteam2 = 0;
+                        }
                         that.maintabbar.enableTab("tab2");
                         that.maintabbar.setActive("tab2");
                         that.maintabbar.disableTab("tab1");
@@ -413,20 +461,6 @@
             },
             init2() {
                 const that = this;
-                this.scoreboard = [];
-                this.matchleftcnt = 0;
-                this.matchleft = [];
-                for (let i = 0; i < this.teamcnt; i++) {
-                    this.scoreboard.push([]);
-                    for (let j = 0; j < this.teamcnt; j++) {
-                        if (this.double == 1) {
-                            this.scoreboard[i].push([0]);
-                        }
-                        else {
-                            this.scoreboard[i].push([0, 0]);
-                        }
-                    }
-                }
                 const rows = [];
                 for (let i = 0; i < this.teamcnt; i++) {
                     rows.push({
@@ -467,7 +501,7 @@
                     },
                     {
                         type: "text",
-                        value: "*未输入名称将默认按“A”，“B”，“C”……命名。"
+                        value: "*队名不可为空、重复或超过15个字符。"
                     }
                 );
                 this.form2 = new Form(null, {
@@ -477,25 +511,53 @@
                 this.maintabbar.getCell("tab2").attach(this.form2);
 
                 this.form2.getItem("next").events.on("click", function (events) {
+                    var flag = true;
+                    that.teamnames = [];
                     for (let i = 0; i < that.teamcnt; i++) {
                         const name = that.form2.getItem(`team${i + 1}`).getValue();
                         if (name == "") {
-                            that.teamnames[i] = String.fromCharCode(65 + i);
+                            that.form2.getItem(`team${i + 1}`).setProperties({
+                                helpMessage: "队名不可为空",
+                            });
+                            alert("队名不可为空");
+                            flag = false;
+                            that.form2.setFocus(`team${i + 1}`);
+                        }
+                        else if (name.length > 15) {
+                            that.form2.getItem(`team${i + 1}`).setProperties({
+                                helpMessage: "队名不可超过15个字符",
+                            });
+                            alert("队名不可超过15个字符");
+                            flag = false;
+                            that.form2.setFocus(`team${i + 1}`);
+                        }
+                        else if (that.teamnames.includes(name)) {
+                            that.form2.getItem(`team${i + 1}`).setProperties({
+                                helpMessage: "队名不可重复",
+                            });
+                            alert("队名不可重复");
+                            flag = false;
+                            that.form2.setFocus(`team${i + 1}`);
                         }
                         else {
                             that.teamnames[i] = name;
+                            that.form2.getItem(`team${i + 1}`).setProperties({
+                                helpMessage: null,
+                            });
                         }
                     }
-                    that.maintabbar.enableTab("tab3");
-                    that.maintabbar.setActive("tab3");
-                    that.maintabbar.disableTab("tab2");
-                    that.init3();
+                    if (flag) {
+                        that.maintabbar.enableTab("tab3");
+                        that.maintabbar.setActive("tab3");
+                        that.maintabbar.disableTab("tab2");
+                        that.init3();
+                    }
                 });
                 this.form2.getItem("pre").events.on("click", function (events) {
                     that.maintabbar.enableTab("tab1");
                     that.maintabbar.setActive("tab1");
                     that.maintabbar.disableTab("tab2");
-                    that.init1();
+                    that.init1(true);
                 });
                 this.form2.getItem("reset").events.on("click", function (events) {
                     that.maintabbar.destructor();
@@ -504,18 +566,7 @@
             },
             init3() {
                 const that = this;
-                this.showtop = 0;
-                this.showbot = 0;
-                this.toprank = 1;
-                this.botrank = 1;
-                this.sadd = 0;
-                this.srank = 0;
-                this.snext = 0;
-                this.steam = 0;
-                this.steamr1 = 1;
-                this.steamr2 = 1;
-                this.nteam1 = 0;
-                this.nteam2 = 0;
+                
                 const rows = [];
                 if (this.bo != -1) {
                     const options = [];
@@ -528,48 +579,14 @@
                     var match = 1;
                     for (let i = 0; i < this.teamcnt; i++) {
                         for (let j = i + 1; j < this.teamcnt; j++) {
-                            const cols = [
-                                {
-                                    type: "select",
-                                    name: `m${match}r1t1`,
-                                    width: 50,
-                                    value: this.scoreboard[i][j][0],
-                                    options
-                                },
-                                {
-                                    type: "spacer",
-                                    width: 20
-                                },
-                                {
-                                    type: "text",
-                                    value: ":",
-                                    width: 20,
-                                },
-                                {
-                                    type: "select",
-                                    name: `m${match}r1t2`,
-                                    width: 50,
-                                    value: this.scoreboard[j][i][0],
-                                    options
-                                },
-                                {
-                                    type: "spacer",
-                                    width: 20
-                                },
-                                {
-                                    type: "checkbox",
-                                    name: `m${match}r1`,
-                                    text: "该场比赛未进行",
-                                    checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 0)
-                                }
-                            ]
-                            if (this.double == 2) {
+                            const cols = [];
+                            for (let k = 0; k < that.double; k++) {
                                 cols.push(
                                     {
                                         type: "select",
-                                        name: `m${match}r2t1`,
+                                        name: `m${match}r${k}t1`,
                                         width: 50,
-                                        value: this.scoreboard[i][j][1],
+                                        value: this.scoreboard[i][j][k],
                                         options
                                     },
                                     {
@@ -583,9 +600,9 @@
                                     },
                                     {
                                         type: "select",
-                                        name: `m${match}r2t2`,
+                                        name: `m${match}r${k}t2`,
                                         width: 50,
-                                        value: this.scoreboard[j][i][1],
+                                        value: this.scoreboard[j][i][k],
                                         options
                                     },
                                     {
@@ -594,15 +611,17 @@
                                     },
                                     {
                                         type: "checkbox",
-                                        name: `m${match}r2`,
+                                        name: `m${match}r${k}`,
                                         text: "该场比赛未进行",
-                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 1)
+                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === k)
                                     }
                                 )
                             }
                             rows.push(
                                 {
                                     type: "text",
+                                    name: `errm${match}`,
+                                    labelPosition: "left",
                                     value: this.teamnames[i] + " VS " + this.teamnames[j]
                                 },
                                 {
@@ -617,49 +636,15 @@
                     var match = 1;
                     for (let i = 0; i < this.teamcnt; i++) {
                         for (let j = i + 1; j < this.teamcnt; j++) {
-                            const cols = [
-                                {
-                                    type: "input",
-                                    name: `m${match}r1t1`,
-                                    width: 100,
-                                    inputType: "number",
-                                    value: this.scoreboard[i][j][0],
-                                },
-                                {
-                                    type: "spacer",
-                                    width: 20
-                                },
-                                {
-                                    type: "text",
-                                    value: ":",
-                                    width: 20,
-                                },
-                                {
-                                    type: "input",
-                                    name: `m${match}r1t2`,
-                                    width: 100,
-                                    inputType: "number",
-                                    value: this.scoreboard[j][i][0],
-                                },
-                                {
-                                    type: "spacer",
-                                    width: 20
-                                },
-                                {
-                                    type: "checkbox",
-                                    name: `m${match}r1`,
-                                    text: "该场比赛未进行",
-                                    checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 0)
-                                }
-                            ]
-                            if (this.double == 2) {
+                            const cols = [];
+                            for (let k = 0; k < that.double; k++) {
                                 cols.push(
                                     {
                                         type: "input",
-                                        name: `m${match}r2t1`,
+                                        name: `m${match}r${k}t1`,
                                         width: 100,
                                         inputType: "number",
-                                        value: this.scoreboard[i][j][1],
+                                        value: this.scoreboard[i][j][k],
                                     },
                                     {
                                         type: "spacer",
@@ -672,10 +657,10 @@
                                     },
                                     {
                                         type: "input",
-                                        name: `m${match}r2t2`,
+                                        name: `m${match}r${k}t2`,
                                         width: 100,
                                         inputType: "number",
-                                        value: this.scoreboard[j][i][1],
+                                        value: this.scoreboard[j][i][k],
                                     },
                                     {
                                         type: "spacer",
@@ -683,15 +668,17 @@
                                     },
                                     {
                                         type: "checkbox",
-                                        name: `m${match}r2`,
+                                        name: `m${match}r${k}`,
                                         text: "该场比赛未进行",
-                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === 1)
+                                        checked: this.matchleft.some(sub => sub[0] === i && sub[1] === j && sub[2] === k)
                                     }
                                 )
                             }
                             rows.push(
                                 {
                                     type: "text",
+                                    name: `errm${match}`,
+                                    labelPosition: "left",
                                     value: this.teamnames[i] + " VS " + this.teamnames[j]
                                 },
                                 {
@@ -735,7 +722,7 @@
                     rows.push(
                         {
                             type: "text",
-                            value: "*每场已进行的比赛必须有且只有一方达到获胜分数，若输入的比分不合规将自动判定为该场比赛未进行。"
+                            value: "*每场已进行的比赛必须有且只有一方达到获胜分数。"
                         }
                     )
                 }
@@ -743,7 +730,7 @@
                     rows.push(
                         {
                             type: "text",
-                            value: "*每场已进行的比赛双方得分必须都是不小于0的整数，若输入的比分不合规将自动判定为该场比赛未进行。"
+                            value: "*每场已进行的比赛双方得分必须都是不小于0的整数。"
                         }
                     )
                 }
@@ -753,45 +740,59 @@
                 });
                 this.maintabbar.getCell("tab3").attach(this.form3);
 
-                this.matchleftcnt = 0;
-                this.matchleft = [];
-                this.form3.getItem("next").events.on("click", function (events) {
-                    function isvalid(f, t1, t2, bo) {
-                        if (f) {
-                            return false;
-                        }
-                        else if (bo == -1) {
-                            return Number.isInteger(t1) && Number.isInteger(t2) && t1 >= 0 && t2 >= 0;
-                        }
-                        else {
-                            return (t1 == (bo + 1) / 2 && t2 < (bo + 1) / 2) || (t2 == (bo + 1) / 2 && t1 < (bo + 1) / 2)
-                        }
+                function isvalid(t1, t2) {
+                    if (that.bo == -1) {
+                        return Number.isInteger(t1) && Number.isInteger(t2) && t1 >= 0 && t2 >= 0;
                     }
+                    else {
+                        return (t1 == (that.bo + 1) / 2 && t2 < (that.bo + 1) / 2) || (t2 == (that.bo + 1) / 2 && t1 < (that.bo + 1) / 2)
+                    }
+                }
+                this.form3.getItem("next").events.on("click", function (events) {
+                    that.matchleftcnt = 0;
+                    that.matchleft = [];
+                    var flag = true;
                     var match = 1;
                     for (let i = 0; i < that.teamcnt; i++) {
                         for (let j = i + 1; j < that.teamcnt; j++) {
-                            for (let k = 1; k <= that.double; k++) {
+                            for (let k = 0; k < that.double; k++) {
                                 const t1 = that.form3.getItem(`m${match}r${k}t1`).getValue();
                                 const t2 = that.form3.getItem(`m${match}r${k}t2`).getValue();
                                 const f = that.form3.getItem(`m${match}r${k}`).isChecked();
-                                if (isvalid(f, t1, t2, that.bo)) {
-                                    that.scoreboard[i][j][k - 1] = t1;
-                                    that.scoreboard[j][i][k - 1] = t2;
+                                if (f) {
+                                    that.scoreboard[i][j][k] = 0;
+                                    that.scoreboard[j][i][k] = 0;
+                                    that.matchleftcnt++;
+                                    that.matchleft.push([i, j, k]);
+                                    that.form3.getItem(`errm${match}`).setProperties({
+                                        helpMessage: null,
+                                    });
+                                }
+                                else if (isvalid(t1, t2)) {
+                                    that.scoreboard[i][j][k] = t1;
+                                    that.scoreboard[j][i][k] = t2;
+                                    that.form3.getItem(`errm${match}`).setProperties({
+                                        helpMessage: null,
+                                    });
                                 }
                                 else {
-                                    that.scoreboard[i][j][k - 1] = 0;
-                                    that.scoreboard[j][i][k - 1] = 0;
-                                    that.matchleftcnt++;
-                                    that.matchleft.push([i, j, k - 1]);
+                                    that.form3.getItem(`errm${match}`).setProperties({
+                                        helpMessage: "输入有误",
+                                    });
+                                    alert("输入有误");
+                                    flag = false;
+                                    that.form3.setFocus(`errm${match}`);
                                 }
                             }
                             match++;
                         }
                     }
-                    that.maintabbar.enableTab("tab4");
-                    that.maintabbar.setActive("tab4");
-                    that.maintabbar.disableTab("tab3");
-                    that.init4();
+                    if (flag) {
+                        that.maintabbar.enableTab("tab4");
+                        that.maintabbar.setActive("tab4");
+                        that.maintabbar.disableTab("tab3");
+                        that.init4();
+                    }
                 });
                 this.form3.getItem("pre").events.on("click", function (events) {
                     that.maintabbar.enableTab("tab2");
@@ -1061,8 +1062,15 @@
                 this.form4.getItem("reset").enable();
                 if (this.matchleftcnt > this.mostml) {
                     this.form4.getItem("sadd").disable();
+                    this.form4.getItem("sadd").setValue(false);
                     this.form4.getItem("srank").disable();
+                    this.form4.getItem("srank").setValue(false);
                     this.form4.getItem("snext").disable();
+                    this.form4.getItem("snext").setValue(false);
+                    this.form4.getItem("steam").disable();
+                    this.form4.getItem("steamr1").disable();
+                    this.form4.getItem("steamr2").disable();
+                    this.form4.getItem("nteam").disable();
                     this.form4.getItem("errm3").setProperties({
                         label: "*剩余比赛过多，排名概率将采用蒙特卡洛模拟计算，其他输出筛选将禁用。",
                     });
@@ -1074,10 +1082,21 @@
                 }
                 else if (this.matchleftcnt == 0) {
                     this.form4.getItem("showtop").disable();
+                    this.form4.getItem("showtop").setValue(false);
                     this.form4.getItem("showbot").disable();
+                    this.form4.getItem("showbot").setValue(false);
                     this.form4.getItem("sadd").disable();
+                    this.form4.getItem("sadd").setValue(false);
                     this.form4.getItem("srank").disable();
+                    this.form4.getItem("srank").setValue(false);
                     this.form4.getItem("snext").disable();
+                    this.form4.getItem("snext").setValue(false);
+                    this.form4.getItem("toprank").disable();
+                    this.form4.getItem("botrank").disable();
+                    this.form4.getItem("steam").disable();
+                    this.form4.getItem("steamr1").disable();
+                    this.form4.getItem("steamr2").disable();
+                    this.form4.getItem("nteam").disable();
                     this.form4.getItem("errm3").setProperties({
                         label: "*所有比赛已结束，无需计算概率，请直接点击提交。",
                     });
@@ -1251,6 +1270,7 @@
                         that.form4.getItem("errm3").setProperties({
                             label: "*计算中，耗时可能较长，请耐心等待",
                         });
+                        //const start = Date.now();
                         $.ajax({
                             url: '/calculate',
                             type: 'POST',
@@ -1266,6 +1286,8 @@
                                     });
                                 }
                                 else {
+                                    //const end = Date.now();
+                                    //console.log(`执行时间：${end - start} 毫秒`);
                                     const lines = response.res.split(/\r?\n/).filter(line => line.trim() !== '');
                                     const arrays = lines.map(line => JSON.parse(line));
                                     //console.log(arrays);
@@ -1364,12 +1386,15 @@
                         },
                         {
                             type: "text",
-                            name: "bo0text",
+                            name: "text",
                         }
                     ],
                 });
                 if (this.bo == -1) {
-                    this.resform.getItem("bo0text").setValue("自由得分赛制下，多支队伍同分时排名方法会根据具体赛事规则有所不同，此处仅供参考");
+                    this.resform.getItem("text").setValue("自由得分赛制下，多支队伍同分时排名方法会根据具体赛事规则有所不同，此处只要积分相同就判定为同分，仅供参考。");
+                }
+                else {
+                    this.resform.getItem("text").setValue("多支队伍同分时排名方法会根据具体赛事规则有所不同，此处按胜场>净胜分>相互比赛胜场>相互比赛净胜分排名。若以上规则无法区分排名先后，则判定为需要加赛。");
                 }
                 this.infoform = new Form(null, {
                     css: "dhx_widget--bordered",
