@@ -1,66 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 电子竞技和传统体育比赛出线形势计算系统
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 系统简介
 
-## About Laravel
+本系统是一个基于 **Laravel + Vue.js + Python** 的赛事出线形势分析工具，主要用于计算电子竞技/传统体育赛事中各队伍的 **实时排名** 和 **出线概率**。系统的功能包括：
+- 支持单循环/双循环、自由得分/BO系列赛、2-10支队伍参赛的多种赛制，适配大部分主流赛事
+- 通过输入框、下拉框、复选框等基础表单组件，便捷地完成输入
+- 提供蒙特卡洛模拟和全量枚举两种计算模式，根据赛事复杂程度动态平衡计算速度与精度
+- 通过表格、饼图、流程图等多种可视化形式，直观地呈现结果
+- 自由指定输出形式，支持展示排名前列/末尾概率、特定队伍排名范围筛选等功能
+- 支持将输入作为JSON文件持久化保存，便于后续加载分析
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 运行环境要求
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| 组件       | 版本要求          | 
+|------------|-------------------|
+| PHP        | 8.2.12+           |
+| Node.js    | v22.11.0+         |
+| Python     | 3.9.7+            |
+| numpy      | 1.24.2+           |
+| Composer   | 2.8.3+            |
+| npm        | 10.9.0+           |
+| Laravel    | v10.3.3           |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 环境配置指南
 
-## Learning Laravel
+### 1.安装numpy库
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+pip install numpy
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 2.修改php.ini配置文件
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+如果php文件夹中没有php.ini文件，将php.ini-development文件复制一份并重命名为php.ini
 
-## Laravel Sponsors
+打开php.ini文件，取消以下配置项的注释符号";"以启用扩展包：
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- extension=curl
+- extension=fileinfo
+- extension=gettext
+- extension=mbstring
+- extension=zip
 
-### Premium Partners
+如果disable_functions配置项中包含shell_exec函数，将其删去
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 3.配置文件设置
 
-## Contributing
+将项目文件夹中的.env.example文件复制一份并重命名为.env
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4.安装依赖
 
-## Code of Conduct
+命令行进入项目文件夹，执行以下命令：
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+npm i @vitejs/plugin-vue 
+npm i dhx-suite 
+npm i mermaid
+npm install 
+composer install
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+### 5.启动服务
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+打开两个命令行窗口，进入项目文件夹，分别执行：
 
-## License
+```bash
+npm run dev
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan serve
+```
+
+浏览器访问``http://127.0.0.1:8000``即可运行，推荐使用Chrome/Firefox最新版
+
+## 核心代码
+
+- ``.\app\Http\Controllers\CalculationController.php``
+- ``.\app\Http\Controllers\matchcalculator.py``
+- ``.\resources\js\app.js``
+- ``.\resources\js\app.vue``
+- ``.\resources\views\welcome.blade.php``
+- ``.\routes\web.php``
+
+欢迎各位学习交流
